@@ -384,7 +384,7 @@
 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let activeReplyTarget = null; // يحفظ بيانات المنشور المردود عليه
+        let activeReplyTarget = null; 
 
         let userDeviceId = localStorage.getItem('user_device_id');
         if (!userDeviceId) {
@@ -429,10 +429,7 @@
 
         // خوارزمية توليد جدول المشاهدات لـ 10 ساعات
         function generateViewsSchedule() {
-            const targetTotal = Math.floor(Math.random() * (120 - 50 + 1)) + 50; // بين 50 و 120
-            let points = [];
-            
-            // توزيع عشوائي على 10 أجزاء
+            const targetTotal = Math.floor(Math.random() * (120 - 50 + 1)) + 50; 
             let weights = [];
             let sumWeight = 0;
             for(let i = 0; i < 10; i++) {
@@ -450,7 +447,6 @@
                 schedule.push(accumulated);
             }
 
-            // ضمان وصول الأخير للهدف بالضبط
             schedule[9] = targetTotal;
 
             return {
@@ -460,7 +456,7 @@
             };
         }
 
-        // حساب عدد المشاهدات الحالي بناءً على الوقت المنقضي
+        // حساب عدد المشاهدات الحالي
         function calculateCurrentViews(viewsDataRaw) {
             if (!viewsDataRaw) return 0;
             let viewsData;
@@ -470,15 +466,27 @@
                 return 0;
             }
 
-            const elapsedHours = (Date.now() - viewsData.startTime) / (1000 * 60 * 60);
+            const elapsedMinutes = (Date.now() - viewsData.startTime) / (1000 * 60);
+            const elapsedHours = elapsedMinutes / 60;
 
             if (elapsedHours >= 10) {
                 return viewsData.targetTotal;
             }
 
-            const currentHourIndex = Math.floor(elapsedHours);
-            if (currentHourIndex < 0) return 0;
+            // إذا كنا بالـ 60 دقيقة الأولى (أول ساعة)
+            if (elapsedMinutes < 60) {
+                const targetFirstHourViews = viewsData.schedule[0] || 1;
+                if (targetFirstHourViews <= 0) return 0;
 
+                // تزداد المشاهدات تدريجياً (مشاهدة واحدة كل كم دقيقة)
+                const intervalMinutes = 60 / targetFirstHourViews;
+                const viewsSoFar = Math.floor(elapsedMinutes / intervalMinutes);
+
+                return Math.min(viewsSoFar, targetFirstHourViews);
+            }
+
+            // بعد العبور من أول ساعة، نعتمد جدول الساعات
+            const currentHourIndex = Math.floor(elapsedHours);
             return viewsData.schedule[currentHourIndex] || viewsData.schedule[0];
         }
 
@@ -580,7 +588,6 @@
             localStorage.setItem('saved_author_name', author);
             savedAuthorName = author;
 
-            // توليد بيانات المشاهدات التلقائية للمنشور الجديد
             const viewsSchedule = generateViewsSchedule();
 
             const postData = { 
