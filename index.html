@@ -15,6 +15,20 @@
             --border-color: #dedcd6;
             --card-bg: #ffffff;
             --accent-color: #111111;
+            --input-bg: #fdfdfd;
+            --banner-bg: #f7f6f2;
+        }
+
+        /* الوضع الداكن */
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --muted-color: #a0a0a0;
+            --border-color: #2a2a2a;
+            --card-bg: #1e1e1e;
+            --accent-color: #ffffff;
+            --input-bg: #282828;
+            --banner-bg: #252525;
         }
 
         * {
@@ -32,15 +46,70 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* شريط أعلى الموقع */
+        .top-bar {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .auth-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .site-header {
             width: 100%;
             max-width: 680px;
             text-align: center;
-            padding: 20px 0 25px 0;
+            padding: 10px 0 25px 0;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 40px;
+            margin-bottom: 25px;
         }
 
         .site-title {
@@ -48,7 +117,6 @@
             font-weight: 700;
             letter-spacing: -0.5px;
             margin-bottom: 5px;
-            color: #111;
         }
 
         .site-subtitle {
@@ -56,6 +124,25 @@
             font-size: 0.95rem;
             color: var(--muted-color);
             font-weight: 300;
+        }
+
+        /* خانة البحث */
+        .search-container {
+            width: 100%;
+            max-width: 680px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            outline: none;
         }
 
         .container {
@@ -73,12 +160,11 @@
             position: relative;
         }
 
-        /* شريط الإشارة إلى الرد */
         .reply-banner {
             font-family: 'Tajawal', sans-serif;
             font-size: 0.82rem;
             color: var(--muted-color);
-            background: #f7f6f2;
+            background: var(--banner-bg);
             padding: 4px 10px;
             border-radius: 2px;
             margin-bottom: 15px;
@@ -92,12 +178,14 @@
             justify-content: space-between;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 1px solid #f2f0eb;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .author-info {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
         }
 
         .author-name {
@@ -132,25 +220,22 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 15px;
-            color: #111;
             line-height: 1.4;
         }
 
         .post-body {
             font-size: 1.15rem;
             text-align: justify;
-            color: #2c2c2c;
             white-space: pre-line;
             margin-bottom: 25px;
         }
 
-        /* أسفل المنشور: الرد والمشاهدات */
         .post-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding-top: 15px;
-            border-top: 1px dashed #f0eee8;
+            border-top: 1px dashed var(--border-color);
             font-family: 'Tajawal', sans-serif;
             font-size: 0.85rem;
             color: var(--muted-color);
@@ -171,7 +256,7 @@
         }
 
         .action-reply-btn:hover {
-            color: #111;
+            color: var(--text-color);
         }
 
         .action-reply-btn svg {
@@ -195,7 +280,6 @@
             fill: currentColor;
         }
 
-        /* زر النشر العائم */
         .fab-publish {
             position: fixed;
             bottom: 35px;
@@ -203,7 +287,7 @@
             width: 54px;
             height: 54px;
             background-color: var(--accent-color);
-            color: #fff;
+            color: var(--bg-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -212,21 +296,20 @@
             cursor: pointer;
             z-index: 1000;
             border: none;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: transform 0.2s;
         }
 
         .fab-publish:hover {
             transform: scale(1.05);
-            background-color: #2c2c2c;
         }
 
         .fab-publish svg {
             width: 24px;
             height: 24px;
-            fill: #ffffff;
+            fill: currentColor;
         }
 
-        /* النافذة المنبثقة للنشر */
+        /* النوافذ المنبثقة */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -234,7 +317,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             z-index: 1001;
             align-items: center;
             justify-content: center;
@@ -246,29 +329,29 @@
         }
 
         .admin-panel {
-            background: #fff;
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
             padding: 30px;
             width: 100%;
             max-width: 550px;
             font-family: 'Tajawal', sans-serif;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
+            color: var(--text-color);
         }
 
         .admin-panel h3 {
             margin-bottom: 15px;
             font-size: 1.15rem;
-            color: #111;
         }
 
         .reply-target-info {
-            background: #f7f6f2;
+            background: var(--banner-bg);
             padding: 8px 12px;
             font-size: 0.85rem;
             color: var(--muted-color);
             margin-bottom: 15px;
-            border-right: 3px solid #111;
+            border-right: 3px solid var(--accent-color);
         }
 
         .admin-panel input, .admin-panel textarea {
@@ -276,7 +359,8 @@
             padding: 12px;
             margin-bottom: 14px;
             border: 1px solid var(--border-color);
-            background: #fdfdfd;
+            background: var(--input-bg);
+            color: var(--text-color);
             font-family: inherit;
             font-size: 0.95rem;
             outline: none;
@@ -294,8 +378,8 @@
         }
 
         .admin-panel button {
-            background: #1c1c1c;
-            color: #fff;
+            background: var(--accent-color);
+            color: var(--bg-color);
             border: none;
             padding: 10px 22px;
             cursor: pointer;
@@ -307,6 +391,40 @@
             background: transparent;
             color: var(--muted-color);
             border: 1px solid var(--border-color);
+        }
+
+        /* واجهة الملف الشخصي */
+        .profile-card {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar-large {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-username {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-bio {
+            font-size: 0.95rem;
+            color: var(--muted-color);
+            margin-bottom: 15px;
         }
 
         .loading-text {
@@ -341,10 +459,27 @@
 </head>
 <body>
 
+    <!-- الشريط الأعلى (تسجيل الدخول والدارك مود) -->
+    <div class="top-bar">
+        <button class="nav-btn" onclick="toggleDarkMode()" id="dark-mode-btn">🌙 الوضع الداكن</button>
+
+        <div class="auth-nav" id="auth-nav-container">
+            <!-- يتعين تلقائياً عبر الكود -->
+        </div>
+    </div>
+
     <header class="site-header">
-        <h1 class="site-title">مدونة مساحة</h1>
+        <h1 class="site-title" style="cursor: pointer;" onclick="clearProfileView()">مدونة مساحة</h1>
         <p class="site-subtitle">مساحتك الآمنة للتعبير الحر</p>
     </header>
+
+    <!-- البحث -->
+    <div class="search-container" id="search-box-container">
+        <input type="text" class="search-input" id="search-input" placeholder="ابحث عن منشور، عنوان، أو اسم كاتب..." oninput="filterPosts()">
+    </div>
+
+    <!-- عرض بيانات البروفايل عند زيارته -->
+    <div class="container" id="profile-header-view" style="display: none;"></div>
 
     <div class="container">
         <div id="posts-container">
@@ -352,8 +487,8 @@
         </div>
     </div>
 
-    <!-- زر النشر السفي -->
-    <button class="fab-publish" onclick="openPublishModal()" title="إضافة منشور">
+    <!-- زر النشر -->
+    <button class="fab-publish" onclick="handlePublishClick()" title="إضافة منشور">
         <svg viewBox="0 0 24 24">
             <path d="M19.38 2.5a2.5 2.5 0 0 0-3.53 0L3.8 14.55a1 1 0 0 0-.24.41l-1.5 5a1 1 0 0 0 1.23 1.23l5-1.5a1 1 0 0 0 .41-.24l12.05-12.05a2.5 2.5 0 0 0 0-3.53zM6 18.29l-.86-2.58 2.58.86L6 18.29zm11.21-11.2-8.5 8.5-1.42-1.42 8.5-8.5 1.42 1.42z"/>
         </svg>
@@ -364,13 +499,31 @@
         <div class="admin-panel">
             <h3 id="modal-title">إضافة منشور جديد</h3>
             <div id="reply-info" class="reply-target-info" style="display: none;"></div>
-            <input type="text" id="author-name-input" placeholder="اسمك أو لقبك المتفرد...">
             <input type="text" id="post-title-input" placeholder="عنوان المقال...">
             <textarea id="post-content-input" placeholder="عبّر بحرية وسرية تامين..."></textarea>
             <div class="modal-actions">
                 <button class="cancel-btn" onclick="closePublishModal()">إلغاء</button>
                 <button onclick="publishPost()">نشر الآن</button>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول / إنشاء حساب -->
+    <div class="modal-overlay" id="auth-modal-overlay">
+        <div class="admin-panel">
+            <h3 id="auth-modal-title">تسجيل الدخول</h3>
+            <input type="text" id="auth-username" placeholder="اسم المستخدم (عربي / انجليزي)...">
+            <input type="password" id="auth-password" placeholder="كلمة السر...">
+            <input type="text" id="auth-bio" placeholder="نبذة عنك (مثلاً: كاتب شغوف) - 25 حرف max" maxlength="25" style="display: none;">
+            
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeAuthModal()">إلغاء</button>
+                <button id="auth-submit-btn" onclick="submitAuth()">دخول</button>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.85rem; text-align: center; color: var(--muted-color);">
+                <span id="auth-toggle-text">ليس لديك حساب؟</span> 
+                <a href="#" onclick="toggleAuthMode()" style="color: var(--text-color); font-weight: bold;" id="auth-toggle-link">إنشاء حساب جديد</a>
+            </p>
         </div>
     </div>
 
@@ -385,6 +538,10 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let activeReplyTarget = null; 
+        let currentUser = JSON.parse(localStorage.getItem('app_user_session')) || null;
+        let isSignUpMode = false;
+        let allFetchedPosts = [];
+        let activeProfileUserId = null;
 
         let userDeviceId = localStorage.getItem('user_device_id');
         if (!userDeviceId) {
@@ -392,11 +549,141 @@
             localStorage.setItem('user_device_id', userDeviceId);
         }
 
-        let savedAuthorName = localStorage.getItem('saved_author_name') || '';
+        // إدارة الوضع الداكن
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('dark-mode-btn').innerText = '☀️ الوضع الفاتح';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('dark-mode-btn').innerText = isDark ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+        }
+
+        // تحديث شريط الحساب أعلى الشاشة
+        function renderAuthBar() {
+            const container = document.getElementById('auth-nav-container');
+            if (currentUser) {
+                const firstChar = currentUser.username.charAt(0).toUpperCase();
+                container.innerHTML = `
+                    <div class="user-profile-badge" onclick="openProfile('${currentUser.id}')">
+                        <div class="avatar-circle">${firstChar}</div>
+                        <span style="font-size: 0.9rem; font-weight: bold;">${currentUser.username}</span>
+                    </div>
+                    <button class="nav-btn" onclick="logout()">خروج</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button class="nav-btn" onclick="openAuthModal(false)">تسجيل الدخول</button>
+                    <button class="nav-btn" onclick="openAuthModal(true)">إنشاء حساب</button>
+                `;
+            }
+        }
+
+        // إدار المصادقة (دخول/تسجيل)
+        function openAuthModal(signUp = false) {
+            isSignUpMode = signUp;
+            updateAuthModalUI();
+            document.getElementById('auth-modal-overlay').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal-overlay').classList.remove('active');
+        }
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            updateAuthModalUI();
+        }
+
+        function updateAuthModalUI() {
+            document.getElementById('auth-modal-title').innerText = isSignUpMode ? "إنشاء حساب جديد" : "تسجيل الدخول";
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "تسجيل" : "دخول";
+            document.getElementById('auth-bio').style.display = isSignUpMode ? "block" : "none";
+            document.getElementById('auth-toggle-text').innerText = isSignUpMode ? "لديك حساب بالفعل؟" : "ليس لديك حساب؟";
+            document.getElementById('auth-toggle-link').innerText = isSignUpMode ? "تسجيل الدخول" : "إنشاء حساب جديد";
+        }
+
+        async function submitAuth() {
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const bio = document.getElementById('auth-bio').value.trim();
+
+            if (!username || !password) {
+                alert("يرجى كتابة اسم المستخدم وكلمة السر!");
+                return;
+            }
+
+            if (isSignUpMode) {
+                // التحقق من وجود الحساب
+                const { data: existing } = await _supabase
+                    .from('users')
+                    .select('id')
+                    .eq('username', username);
+
+                if (existing && existing.length > 0) {
+                    alert("اسم المستخدم هذا مأخوذ بالفعل، اختر اسماً آخر.");
+                    return;
+                }
+
+                const newUser = { username, password, bio: bio || '' };
+                const { data, error } = await _supabase
+                    .from('users')
+                    .insert([newUser])
+                    .select();
+
+                if (error || !data) {
+                    alert("حدث خطأ أثناء انشاء الحساب.");
+                } else {
+                    currentUser = data[0];
+                    localStorage.setItem('app_user_session', JSON.stringify(currentUser));
+                    closeAuthModal();
+                    renderAuthBar();
+                    fetchPosts();
+                }
+            } else {
+                // تسجيل الدخول
+                const { data, error } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password', password);
+
+                if (error || !data || data.length === 0) {
+                    alert("اسم المستخدم أو كلمة السر غير صحيحة!");
+                } else {
+                    currentUser = data[0];
+                    localStorage.setItem('app_user_session', JSON.stringify(currentUser));
+                    closeAuthModal();
+                    renderAuthBar();
+                    fetchPosts();
+                }
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('app_user_session');
+            renderAuthBar();
+            clearProfileView();
+        }
+
+        function handlePublishClick() {
+            if (!currentUser) {
+                alert("يجب عليك تسجيل الدخول أولاً لكي تتمكن من إضافة منشور!");
+                openAuthModal(false);
+                return;
+            }
+            openPublishModal();
+        }
 
         function openPublishModal(replyPostId = null, replyAuthor = null) {
-            if (savedAuthorName) {
-                document.getElementById('author-name-input').value = savedAuthorName;
+            if (!currentUser) {
+                alert("يجب عليك تسجيل الدخول لكي تقوم بالرد!");
+                openAuthModal(false);
+                return;
             }
 
             const modalTitle = document.getElementById('modal-title');
@@ -427,7 +714,6 @@
             return date.toLocaleDateString('ar-IQ', options);
         }
 
-        // خوارزمية توليد جدول المشاهدات لـ 10 ساعات
         function generateViewsSchedule() {
             const targetTotal = Math.floor(Math.random() * (120 - 50 + 1)) + 50; 
             let weights = [];
@@ -456,7 +742,6 @@
             };
         }
 
-        // حساب عدد المشاهدات الحالي
         function calculateCurrentViews(viewsDataRaw) {
             if (!viewsDataRaw) return 0;
             let viewsData;
@@ -473,19 +758,16 @@
                 return viewsData.targetTotal;
             }
 
-            // إذا كنا بالـ 60 دقيقة الأولى (أول ساعة)
             if (elapsedMinutes < 60) {
                 const targetFirstHourViews = viewsData.schedule[0] || 1;
                 if (targetFirstHourViews <= 0) return 0;
 
-                // تزداد المشاهدات تدريجياً (مشاهدة واحدة كل كم دقيقة)
                 const intervalMinutes = 60 / targetFirstHourViews;
                 const viewsSoFar = Math.floor(elapsedMinutes / intervalMinutes);
 
                 return Math.min(viewsSoFar, targetFirstHourViews);
             }
 
-            // بعد العبور من أول ساعة، نعتمد جدول الساعات
             const currentHourIndex = Math.floor(elapsedHours);
             return viewsData.schedule[currentHourIndex] || viewsData.schedule[0];
         }
@@ -503,14 +785,26 @@
                 return;
             }
 
-            if (!posts || posts.length === 0) {
-                container.innerHTML = `<p class="loading-text">لا توجد منشورات حالياً.</p>`;
+            allFetchedPosts = posts || [];
+            renderPosts(allFetchedPosts);
+        }
+
+        function renderPosts(postsToRender) {
+            const container = document.getElementById('posts-container');
+
+            // تصفية إذا كنا بداخل الملف الشخصي
+            if (activeProfileUserId) {
+                postsToRender = postsToRender.filter(p => p.user_id == activeProfileUserId);
+            }
+
+            if (!postsToRender || postsToRender.length === 0) {
+                container.innerHTML = `<p class="loading-text">لا توجد منشورات للعرض.</p>`;
                 return;
             }
 
             let html = '';
-            posts.forEach(post => {
-                const isOwner = post.device_id === userDeviceId;
+            postsToRender.forEach(post => {
+                const isOwner = currentUser && (post.user_id == currentUser.id || post.device_id === userDeviceId);
                 const deleteButtonHtml = isOwner 
                     ? `<button class="delete-btn" onclick="deletePost(${post.id})">حذف</button>` 
                     : '';
@@ -520,14 +814,16 @@
                     : '';
 
                 const currentViews = calculateCurrentViews(post.views_data);
+                const authorInitial = (post.author || 'م').charAt(0).toUpperCase();
 
                 html += `
                     <article class="post">
                         ${replyBannerHtml}
                         <div class="post-header">
-                            <div class="author-info">
+                            <div class="author-info" onclick="openProfile('${post.user_id}', '${post.author}')">
+                                <div class="avatar-circle" style="width: 26px; height: 26px; font-size: 0.75rem;">${authorInitial}</div>
                                 <span class="author-name">${post.author || 'مجهول'}</span>
-                                <span class="post-date">${post.date}</span>
+                                <span class="post-date">• ${post.date}</span>
                             </div>
                             ${deleteButtonHtml}
                         </div>
@@ -556,37 +852,79 @@
             container.innerHTML = html;
         }
 
+        // فلترة المنشورات بـ البحث
+        function filterPosts() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            if (!query) {
+                renderPosts(allFetchedPosts);
+                return;
+            }
+
+            const filtered = allFetchedPosts.filter(p => 
+                (p.title && p.title.toLowerCase().includes(query)) ||
+                (p.content && p.content.toLowerCase().includes(query)) ||
+                (p.author && p.author.toLowerCase().includes(query))
+            );
+
+            renderPosts(filtered);
+        }
+
+        // عرض الملف الشخصي
+        async function openProfile(userId, fallbackName = 'مجهول') {
+            if (!userId || userId === 'null' || userId === 'undefined') {
+                alert("هذا المنشور نشر قبل إضافة نظام الحسابات!");
+                return;
+            }
+
+            activeProfileUserId = userId;
+            const profileHeader = document.getElementById('profile-header-view');
+            
+            // جلب بيانات المستخدم من جدول users
+            const { data } = await _supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            const name = data ? data.username : fallbackName;
+            const bio = (data && data.bio) ? data.bio : 'لا توجد نبذة تعريفية.';
+            const initial = name.charAt(0).toUpperCase();
+
+            profileHeader.innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-avatar-large">${initial}</div>
+                    <div class="profile-username">${name}</div>
+                    <div class="profile-bio">${bio}</div>
+                    <button class="nav-btn" onclick="clearProfileView()">العودة للرئيسية</button>
+                </div>
+            `;
+
+            profileHeader.style.display = 'block';
+            document.getElementById('search-box-container').style.display = 'none';
+            renderPosts(allFetchedPosts);
+        }
+
+        function clearProfileView() {
+            activeProfileUserId = null;
+            document.getElementById('profile-header-view').style.display = 'none';
+            document.getElementById('search-box-container').style.display = 'block';
+            renderPosts(allFetchedPosts);
+        }
+
         async function publishPost() {
-            const author = document.getElementById('author-name-input').value.trim();
+            if (!currentUser) {
+                alert("يجب عليك تسجيل الدخول للنشر!");
+                return;
+            }
+
             const title = document.getElementById('post-title-input').value.trim();
             const content = document.getElementById('post-content-input').value.trim();
             const currentDate = getCurrentFormattedDate();
 
-            if (!author || !title || !content) {
+            if (!title || !content) {
                 alert("يرجى ملء جميع الحقول المطلوب!");
                 return;
             }
-
-            const { data: existingAuthors, error: checkError } = await _supabase
-                .from('posts')
-                .select('device_id')
-                .eq('author', author)
-                .limit(1);
-
-            if (checkError) {
-                alert("حدث خطأ أثناء التحقق من الاسم.");
-                return;
-            }
-
-            if (existingAuthors && existingAuthors.length > 0) {
-                if (existingAuthors[0].device_id !== userDeviceId) {
-                    alert("هذا الاسم مستخدم من قبل شخص آخر، يرجى اختيار اسم آخر أو إضافة رقم/رمز إليه.");
-                    return;
-                }
-            }
-
-            localStorage.setItem('saved_author_name', author);
-            savedAuthorName = author;
 
             const viewsSchedule = generateViewsSchedule();
 
@@ -594,7 +932,8 @@
                 title: title, 
                 date: currentDate, 
                 content: content,
-                author: author,
+                author: currentUser.username,
+                user_id: currentUser.id,
                 device_id: userDeviceId,
                 views_data: JSON.stringify(viewsSchedule)
             };
@@ -624,8 +963,7 @@
             const { error } = await _supabase
                 .from('posts')
                 .delete()
-                .eq('id', postId)
-                .eq('device_id', userDeviceId);
+                .eq('id', postId);
 
             if (error) {
                 alert("تعذر حذف المنشور.");
@@ -634,7 +972,10 @@
             }
         }
 
-        window.onload = fetchPosts;
+        window.onload = () => {
+            renderAuthBar();
+            fetchPosts();
+        };
     </script>
 </body>
 </html>
