@@ -185,6 +185,30 @@
             border-right: 2px solid var(--muted-color);
         }
 
+        .quoted-post-snippet {
+            background: var(--banner-bg);
+            border-right: 3px solid var(--accent-color);
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            border-radius: 2px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .quoted-post-header {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 3px;
+        }
+
+        .quoted-post-content {
+            font-size: 0.88rem;
+            color: var(--muted-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .post-header {
             display: flex;
             align-items: center;
@@ -757,7 +781,7 @@
             } else {
                 container.innerHTML = `
                     <button class="nav-btn" onclick="openAuthModal(false)">تسجيل الدخول</button>
-                    <button class="nav-btn" onclick="openAuthModal(true)">إنشاء حساب</button>
+                    <button class="nav-btn" onclick="openAuthModal(true)">إنشاء حساب جديد</button>
                 `;
             }
         }
@@ -857,7 +881,7 @@
             openPublishModal();
         }
 
-        function openPublishModal(replyPostId = null, replyAuthor = null) {
+        function openPublishModal(replyPostId = null, replyAuthor = null, replyTitle = null, replyContent = null) {
             if (!currentUser) {
                 alert("يجب عليك تسجيل الدخول لكي تقوم بالرد!");
                 openAuthModal(false);
@@ -868,7 +892,7 @@
             const replyInfo = document.getElementById('reply-info');
 
             if (replyPostId && replyAuthor) {
-                activeReplyTarget = { id: replyPostId, author: replyAuthor };
+                activeReplyTarget = { id: replyPostId, author: replyAuthor, title: replyTitle || '', content: replyContent || '' };
                 modalTitle.innerText = "إضافة رد على منشور";
                 replyInfo.innerText = `رد على منشور الكاتب: ${replyAuthor}`;
                 replyInfo.style.display = 'block';
@@ -998,6 +1022,9 @@
                 return;
             }
 
+            const postsMap = {};
+            allFetchedPosts.forEach(p => postsMap[p.id] = p);
+
             let html = '';
             postsToRender.forEach(post => {
                 const isOwner = currentUser && (post.user_id == currentUser.id || post.device_id === userDeviceId);
@@ -1005,17 +1032,29 @@
                     ? `<button class="delete-btn" onclick="deletePost(${post.id})">حذف</button>` 
                     : '';
 
-                const replyBannerHtml = post.reply_to_author 
-                    ? `<div class="reply-banner">رد على منشور ${post.reply_to_author}</div>` 
-                    : '';
+                let quotedHtml = '';
+                if (post.reply_to) {
+                    const parentPost = postsMap[post.reply_to];
+                    const parentAuthor = post.reply_to_author || (parentPost ? parentPost.author : 'مجهول');
+                    const parentText = parentPost ? (parentPost.content || parentPost.title || '') : (post.reply_to_content || '');
+
+                    quotedHtml = `
+                        <div class="quoted-post-snippet">
+                            <div class="quoted-post-header">ردًا على ${parentAuthor}</div>
+                            ${parentText ? `<div class="quoted-post-content">${parentText}</div>` : ''}
+                        </div>
+                    `;
+                }
 
                 const currentViews = calculateCurrentViews(post.views_data);
                 const authorInitial = (post.author || 'م').charAt(0).toUpperCase();
                 const formattedAuthorName = renderFormattedUsername(post.author, post.is_author_verified);
 
+                const escapedTitle = (post.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const escapedContent = (post.content || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+
                 html += `
                     <article class="post">
-                        ${replyBannerHtml}
                         <div class="post-header">
                             <div class="author-info" onclick="openProfile('${post.user_id}', '${post.author}')">
                                 <div class="avatar-circle" style="width: 26px; height: 26px; font-size: 0.75rem;">${authorInitial}</div>
@@ -1024,11 +1063,12 @@
                             </div>
                             ${deleteButtonHtml}
                         </div>
+                        ${quotedHtml}
                         <h2 class="post-title">${post.title}</h2>
                         <div class="post-body">${post.content}</div>
                         
                         <div class="post-footer">
-                            <button class="action-reply-btn" onclick="openPublishModal(${post.id}, '${post.author || 'مجهول'}')">
+                            <button class="action-reply-btn" onclick="openPublishModal(${post.id}, '${post.author || 'مجهول'}', '${escapedTitle}', '${escapedContent}')">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
                                 </svg>
@@ -1279,6 +1319,7 @@
             if (activeReplyTarget) {
                 postData.reply_to = activeReplyTarget.id;
                 postData.reply_to_author = activeReplyTarget.author;
+                postData.reply_to_content = activeReplyTarget.content || activeReplyTarget.title;
             }
 
             const { error } = await _supabase
