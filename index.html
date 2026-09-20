@@ -18,6 +18,7 @@
             --input-bg: #fdfdfd;
             --banner-bg: #f7f6f2;
             --badge-color: #2b2b2b;
+            --gold-color: #c5a059;
         }
 
         /* الوضع الداكن */
@@ -31,6 +32,7 @@
             --input-bg: #282828;
             --banner-bg: #252525;
             --badge-color: #cccccc;
+            --gold-color: #d4af37;
         }
 
         * {
@@ -202,20 +204,29 @@
         .author-name-container {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             font-family: 'Tajawal', sans-serif;
             font-weight: 700;
             font-size: 0.95rem;
             color: var(--text-color);
         }
 
-        /* تنسيق شارة التوثيق SVG */
+        /* شارات التوثيق الأنيقة */
         .verified-badge-svg {
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             fill: var(--badge-color);
             display: inline-block;
             vertical-align: middle;
+        }
+
+        .verified-badge-gold {
+            width: 16px;
+            height: 16px;
+            fill: var(--gold-color);
+            display: inline-block;
+            vertical-align: middle;
+            filter: drop-shadow(0 1px 2px rgba(197, 160, 89, 0.3));
         }
 
         .post-date {
@@ -361,6 +372,8 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
             color: var(--text-color);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .admin-panel h3 {
@@ -461,6 +474,50 @@
             padding: 20px;
         }
 
+        /* قائمة التوثيق الرسمية */
+        .verification-rules {
+            background: var(--banner-bg);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-right: 3px solid var(--accent-color);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .verification-rules ul {
+            margin-right: 20px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .req-item {
+            margin-bottom: 3px;
+        }
+
+        .req-met {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .req-not-met {
+            color: #c62828;
+        }
+
+        .admin-req-card {
+            background: var(--banner-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .admin-req-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         footer {
             margin-top: 40px;
             text-align: center;
@@ -489,7 +546,6 @@
     <!-- الشريط الأعلى (تسجيل الدخول والدارك مود) -->
     <div class="top-bar">
         <button class="nav-btn" onclick="toggleDarkMode()" id="dark-mode-btn">
-            <!-- ايقونة الوضع الداكن SVG -->
             <svg id="theme-btn-icon" viewBox="0 0 24 24">
                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
             </svg>
@@ -547,7 +603,7 @@
             <h3 id="auth-modal-title">تسجيل الدخول</h3>
             <input type="text" id="auth-username" placeholder="اسم المستخدم (عربي / انجليزي)...">
             <input type="password" id="auth-password" placeholder="كلمة السر...">
-            <input type="text" id="auth-bio" placeholder="نبذة عنك (مثلاً: كاتب شغوف) - 25 حرف max" maxlength="25" style="display: none;">
+            <input type="text" id="auth-bio" placeholder="نبذة عنك - 50 حرف كحد أقصى" maxlength="50" style="display: none;">
             
             <div class="modal-actions">
                 <button class="cancel-btn" onclick="closeAuthModal()">إلغاء</button>
@@ -560,8 +616,46 @@
         </div>
     </div>
 
+    <!-- نافذة طلب التوثيق للمستخدمين -->
+    <div class="modal-overlay" id="verification-modal-overlay">
+        <div class="admin-panel">
+            <h3>طلب توثيق الحساب</h3>
+            
+            <div class="verification-rules">
+                <strong>الشروط والأحكام المطلوبة للتوثيق:</strong>
+                <ul>
+                    <li class="req-item" id="req-days-item">• استخدام المنصة لمدة لا تقل عن 10 أيام.</li>
+                    <li class="req-item" id="req-posts-item">• نشر 25 منشوراً على الأقل في المدونة.</li>
+                </ul>
+                <p style="font-size: 0.8rem; color: var(--muted-color); border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top: 5px;">
+                    <strong>ملاحظة:</strong> سيتم مراجعة حسابك ودراسة الطلب من قبل الإدارة للتأكد من استيفاء الشروط ومعايير التوثيق قبل اتخاذ القرار بالقبول.
+                </p>
+            </div>
+
+            <textarea id="verification-reason" placeholder="اكتب ملاحظة أو سبب إضافي لطلب التوثيق (اختياري)..." style="height: 80px;"></textarea>
+
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeVerificationModal()">إلغاء</button>
+                <button onclick="submitVerificationRequest()">تقديم الطلب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة التوثيق (خاصة بالادمن "الياسري") -->
+    <div class="modal-overlay" id="admin-requests-modal-overlay">
+        <div class="admin-panel" style="max-width: 600px;">
+            <h3>طلبات التوثيق المعلقة</h3>
+            <div id="admin-requests-list">
+                <p class="loading-text">جاري جلب الطلبات...</p>
+            </div>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button class="cancel-btn" onclick="closeAdminRequestsModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
-        جميع الحقوق محفوظة &copy; الياسري
+        جميع الحقوق محفوظة &copy; الياسري / يارا
     </footer>
 
     <script>
@@ -582,8 +676,18 @@
             localStorage.setItem('user_device_id', userDeviceId);
         }
 
-        // دالة توليد أيقونة وشارة التوثيق الرمادية/الداكنة SVG
-        function getVerifiedBadgeSvg() {
+        // قائمة المؤسسين ذوي التوثيق الذهبي الخاص
+        const founders = ['الياسري', 'Dr.Yara Amjad'];
+
+        // دالة توليد أيقونات شارة التوثيق المصممة بدقة
+        function getVerifiedBadgeSvg(isGold = false) {
+            if (isGold) {
+                return `
+                    <svg class="verified-badge-gold" viewBox="0 0 24 24" title="توثيق مخصص للمؤسسين">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                `;
+            }
             return `
                 <svg class="verified-badge-svg" viewBox="0 0 24 24" title="حساب موثق">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -591,14 +695,18 @@
             `;
         }
 
-        // دالة إرجاع الاسم مع الشارة إذا كان المستخدم هو "الياسري"
-        function renderFormattedUsername(username) {
+        // دالة إرجاع الاسم مع الشارة المناسبة
+        function renderFormattedUsername(username, isVerified = false) {
             if (!username) return 'مجهول';
-            const isFounder = (username.trim() === 'الياسري');
+            const cleanName = username.trim();
+            const isFounder = founders.includes(cleanName);
+
             if (isFounder) {
-                return `<span class="author-name-container">${username} ${getVerifiedBadgeSvg()}</span>`;
+                return `<span class="author-name-container">${cleanName} ${getVerifiedBadgeSvg(true)}</span>`;
+            } else if (isVerified) {
+                return `<span class="author-name-container">${cleanName} ${getVerifiedBadgeSvg(false)}</span>`;
             }
-            return `<span class="author-name-container">${username}</span>`;
+            return `<span class="author-name-container">${cleanName}</span>`;
         }
 
         // إدارة الوضع الداكن
@@ -631,12 +739,19 @@
             const container = document.getElementById('auth-nav-container');
             if (currentUser) {
                 const firstChar = currentUser.username.charAt(0).toUpperCase();
-                const formattedName = renderFormattedUsername(currentUser.username);
+                const formattedName = renderFormattedUsername(currentUser.username, currentUser.is_verified);
+                const isAdmin = currentUser.username.trim() === 'الياسري';
+
+                const adminBtnHtml = isAdmin 
+                    ? `<button class="nav-btn" onclick="openAdminRequestsModal()" style="border-color: var(--gold-color);">طلبات التوثيق</button>` 
+                    : '';
+
                 container.innerHTML = `
                     <div class="user-profile-badge" onclick="openProfile('${currentUser.id}')">
                         <div class="avatar-circle">${firstChar}</div>
                         <span style="font-size: 0.9rem; font-weight: bold;">${formattedName}</span>
                     </div>
+                    ${adminBtnHtml}
                     <button class="nav-btn" onclick="logout()">خروج</button>
                 `;
             } else {
@@ -814,25 +929,28 @@
                 return 0;
             }
 
-            const elapsedMinutes = (Date.now() - viewsData.startTime) / (1000 * 60);
+            const startTime = new Date(viewsData.startTime).getTime();
+            if (isNaN(startTime)) return 0;
+
+            const elapsedMinutes = (Date.now() - startTime) / (1000 * 60);
             const elapsedHours = elapsedMinutes / 60;
 
             if (elapsedHours >= 10) {
-                return viewsData.targetTotal;
+                return viewsData.targetTotal || 0;
             }
 
             if (elapsedMinutes < 60) {
-                const targetFirstHourViews = viewsData.schedule[0] || 1;
-                if (targetFirstHourViews <= 0) return 0;
+                const targetFirstHourViews = viewsData.schedule ? viewsData.schedule[0] : 1;
+                if (!targetFirstHourViews || targetFirstHourViews <= 0) return 0;
 
                 const intervalMinutes = 60 / targetFirstHourViews;
                 const viewsSoFar = Math.floor(elapsedMinutes / intervalMinutes);
 
-                return Math.min(viewsSoFar, targetFirstHourViews);
+                return Math.min(viewsSoFar, targetFirstHourViews) || 0;
             }
 
             const currentHourIndex = Math.floor(elapsedHours);
-            return viewsData.schedule[currentHourIndex] || viewsData.schedule[0];
+            return (viewsData.schedule && viewsData.schedule[currentHourIndex]) ? viewsData.schedule[currentHourIndex] : (viewsData.targetTotal || 0);
         }
 
         async function fetchPosts() {
@@ -849,6 +967,22 @@
             }
 
             allFetchedPosts = posts || [];
+
+            // جلب حالة التوثيق الحقيقية لكل كتاب المنشورات
+            const userIds = [...new Set(allFetchedPosts.map(p => p.user_id).filter(Boolean))];
+            if (userIds.length > 0) {
+                const { data: usersData } = await _supabase
+                    .from('users')
+                    .select('id, is_verified')
+                    .in('id', userIds);
+
+                if (usersData) {
+                    const verificationMap = {};
+                    usersData.forEach(u => verificationMap[u.id] = u.is_verified);
+                    allFetchedPosts.forEach(p => p.is_author_verified = verificationMap[p.user_id] || false);
+                }
+            }
+
             renderPosts(allFetchedPosts);
         }
 
@@ -877,7 +1011,7 @@
 
                 const currentViews = calculateCurrentViews(post.views_data);
                 const authorInitial = (post.author || 'م').charAt(0).toUpperCase();
-                const formattedAuthorName = renderFormattedUsername(post.author);
+                const formattedAuthorName = renderFormattedUsername(post.author, post.is_author_verified);
 
                 html += `
                     <article class="post">
@@ -950,15 +1084,29 @@
 
             const name = data ? data.username : fallbackName;
             const bio = (data && data.bio) ? data.bio : 'لا توجد نبذة تعريفية.';
+            const isVerified = data ? data.is_verified : false;
             const initial = name.charAt(0).toUpperCase();
-            const formattedName = renderFormattedUsername(name);
+            const formattedName = renderFormattedUsername(name, isVerified);
+
+            // زر التوثيق في البروفايل الخاص بالشخص نفسه
+            let verificationActionBtn = '';
+            if (currentUser && currentUser.id == userId) {
+                if (data && data.is_verified) {
+                    verificationActionBtn = `<p style="font-size: 0.85rem; color: #2e7d32; font-weight: bold; margin-bottom: 10px;">✓ حسابك موثق رسمياً</p>`;
+                } else if (data && data.verification_status === 'pending') {
+                    verificationActionBtn = `<p style="font-size: 0.85rem; color: var(--muted-color); margin-bottom: 10px;">⏳ طلب التوثيق قيد المراجعة لدى الإدارة</p>`;
+                } else {
+                    verificationActionBtn = `<button class="nav-btn" onclick="openVerificationModal()" style="margin-bottom: 12px;">طلب توثيق الحساب</button>`;
+                }
+            }
 
             profileHeader.innerHTML = `
                 <div class="profile-card">
                     <div class="profile-avatar-large">${initial}</div>
                     <div class="profile-username">${formattedName}</div>
                     <div class="profile-bio">${bio}</div>
-                    <button class="nav-btn" onclick="clearProfileView()">العودة للرئيسية</button>
+                    ${verificationActionBtn}
+                    <div><button class="nav-btn" onclick="clearProfileView()">العودة للرئيسية</button></div>
                 </div>
             `;
 
@@ -972,6 +1120,133 @@
             document.getElementById('profile-header-view').style.display = 'none';
             document.getElementById('search-box-container').style.display = 'block';
             renderPosts(allFetchedPosts);
+        }
+
+        // دالة فتح نافذة طلب التوثيق للمستخدم
+        async function openVerificationModal() {
+            if (!currentUser) return;
+
+            // حساب الأيام وعدد المنشورات
+            let daysActive = 0;
+            if (currentUser.created_at) {
+                const createdDate = new Date(currentUser.created_at);
+                const diffTime = Math.abs(Date.now() - createdDate.getTime());
+                daysActive = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            }
+
+            const { count: postsCount } = await _supabase
+                .from('posts')
+                .select('id', { count: 'exact', head: true })
+                .eq('user_id', currentUser.id);
+
+            const userPosts = postsCount || 0;
+
+            const daysElem = document.getElementById('req-days-item');
+            const postsElem = document.getElementById('req-posts-item');
+
+            daysElem.innerHTML = `• استخدام المنصة لمدة لا تقل عن 10 أيام. <strong>(حسابك: ${daysActive} يوم)</strong>`;
+            postsElem.innerHTML = `• نشر 25 منشوراً على الأقل في المدونة. <strong>(منشوراتك: ${userPosts})</strong>`;
+
+            document.getElementById('verification-modal-overlay').classList.add('active');
+        }
+
+        function closeVerificationModal() {
+            document.getElementById('verification-modal-overlay').classList.remove('active');
+        }
+
+        async function submitVerificationRequest() {
+            const reason = document.getElementById('verification-reason').value.trim();
+
+            const { error } = await _supabase
+                .from('users')
+                .update({ 
+                    verification_status: 'pending',
+                    verification_reason: reason 
+                })
+                .eq('id', currentUser.id);
+
+            if (error) {
+                alert("حدث خطأ أثناء إرسال الطلب!");
+            } else {
+                alert("تم إرسال طلب التوثيق بنجاح، وستقوم الإدارة بمراجعة حسابك قريباً.");
+                currentUser.verification_status = 'pending';
+                localStorage.setItem('app_user_session', JSON.stringify(currentUser));
+                closeVerificationModal();
+                openProfile(currentUser.id);
+            }
+        }
+
+        // لوحة الإدارة للادمن (الياسري)
+        async function openAdminRequestsModal() {
+            if (!currentUser || currentUser.username.trim() !== 'الياسري') {
+                alert("هذه اللوحة خاصة بـ الإدارة فقط!");
+                return;
+            }
+
+            const listContainer = document.getElementById('admin-requests-list');
+            document.getElementById('admin-requests-modal-overlay').classList.add('active');
+
+            const { data: pendingUsers, error } = await _supabase
+                .from('users')
+                .select('*')
+                .eq('verification_status', 'pending');
+
+            if (error || !pendingUsers || pendingUsers.length === 0) {
+                listContainer.innerHTML = `<p class="loading-text">لا توجد طلبات توثيق معلقة حالياً.</p>`;
+                return;
+            }
+
+            let html = '';
+            for (let u of pendingUsers) {
+                const { count: userPostsCount } = await _supabase
+                    .from('posts')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('user_id', u.id);
+
+                let days = 0;
+                if (u.created_at) {
+                    days = Math.floor((Date.now() - new Date(u.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                }
+
+                html += `
+                    <div class="admin-req-card">
+                        <strong>المستخدم: ${u.username}</strong>
+                        <div style="font-size: 0.85rem; color: var(--muted-color); margin-top: 3px;">
+                            • العمر: ${days} يوم | • المنشورات: ${userPostsCount || 0}
+                        </div>
+                        ${u.verification_reason ? `<p style="font-size: 0.85rem; margin-top: 5px;">ملاحظة: ${u.verification_reason}</p>` : ''}
+                        <div class="admin-req-actions">
+                            <button onclick="processVerification('${u.id}', true)">قبول التوثيق</button>
+                            <button class="cancel-btn" onclick="processVerification('${u.id}', false)">رفض</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            listContainer.innerHTML = html;
+        }
+
+        function closeAdminRequestsModal() {
+            document.getElementById('admin-requests-modal-overlay').classList.remove('active');
+        }
+
+        async function processVerification(userId, isApproved) {
+            const updates = isApproved 
+                ? { is_verified: true, verification_status: 'approved' }
+                : { is_verified: false, verification_status: 'rejected' };
+
+            const { error } = await _supabase
+                .from('users')
+                .update(updates)
+                .eq('id', userId);
+
+            if (error) {
+                alert("حدث خطأ أثناء معالجة الطلب!");
+            } else {
+                alert(isApproved ? "تم توثيق الحساب بنجاح!" : "تم رفض الطلب.");
+                openAdminRequestsModal();
+                fetchPosts();
+            }
         }
 
         async function publishPost() {
