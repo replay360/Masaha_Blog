@@ -300,7 +300,7 @@
             fill: currentColor;
         }
 
-        /* تصميم قسم الردود أسفل المنشور */
+        /* تصميم قسم الردود والتعليقات */
         .comments-section {
             margin-top: 20px;
             padding-top: 15px;
@@ -335,6 +335,18 @@
             align-items: center;
             margin-bottom: 4px;
             font-size: 0.85rem;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reply-to-tag {
+            color: var(--muted-color);
+            font-size: 0.8rem;
+            font-weight: normal;
         }
 
         .comment-body {
@@ -955,7 +967,6 @@
         function renderPosts(postsToRender) {
             const container = document.getElementById('posts-container');
 
-            // تصفية المنشورات الأساسية فقط (التي ليست ردوداً)
             let mainPosts = postsToRender.filter(p => !p.reply_to);
 
             if (activeProfileUserId) {
@@ -967,7 +978,6 @@
                 return;
             }
 
-            // تجميع الردود حسب ID المنشور الرئيسي
             const repliesMap = {};
             postsToRender.forEach(p => {
                 if (p.reply_to) {
@@ -994,15 +1004,23 @@
                         const formattedReplyAuthor = renderFormattedUsername(reply.author, reply.is_author_verified);
                         const isReplyOwner = currentUser && (reply.user_id == currentUser.id || reply.device_id === userDeviceId);
                         
+                        const replyToTargetTag = (reply.reply_to_author && reply.reply_to_author !== post.author) 
+                            ? `<span class="reply-to-tag">رداً على <b>@${reply.reply_to_author}</b></span>` 
+                            : '';
+
                         repliesListHtml += `
                             <div class="comment-item">
                                 <div class="comment-header">
                                     <div class="author-info" onclick="openProfile('${reply.user_id}', '${reply.author}')">
                                         <div class="avatar-circle" style="width: 20px; height: 20px; font-size: 0.65rem;">${replyInitial}</div>
                                         ${formattedReplyAuthor}
+                                        ${replyToTargetTag}
                                     </div>
-                                    <span class="post-date">${reply.date}</span>
-                                    ${isReplyOwner ? `<button class="delete-btn" onclick="deletePost(${reply.id})">حذف</button>` : ''}
+                                    <div class="comment-actions">
+                                        <button class="action-reply-btn" onclick="toggleInlineReply(${post.id}, '${reply.author}')" style="font-size: 0.75rem;">رد</button>
+                                        <span class="post-date">${reply.date}</span>
+                                        ${isReplyOwner ? `<button class="delete-btn" onclick="deletePost(${reply.id})">حذف</button>` : ''}
+                                    </div>
                                 </div>
                                 <div class="comment-body">${reply.content}</div>
                             </div>
@@ -1024,7 +1042,7 @@
                         <div class="post-body">${post.content}</div>
                         
                         <div class="post-footer">
-                            <button class="action-reply-btn" onclick="toggleInlineReply(${post.id})">
+                            <button class="action-reply-btn" onclick="toggleInlineReply(${post.id}, '${post.author}')">
                                 <svg viewBox="0 0 24 24">
                                     <path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/>
                                 </svg>
@@ -1039,16 +1057,17 @@
                             </div>
                         </div>
 
-                        <!-- قسم الردود تحت المنشور مباشرة -->
+                        <!-- قسم الردود والتعليقات -->
                         <div class="comments-section">
                             ${postReplies.length > 0 ? `<div class="comments-header">الردود:</div>` : ''}
                             <div class="comments-list">${repliesListHtml}</div>
 
                             <div class="inline-reply-box" id="inline-reply-box-${post.id}">
                                 <textarea class="inline-reply-input" id="inline-reply-input-${post.id}" placeholder="اكتب ردك هنا..."></textarea>
+                                <input type="hidden" id="inline-reply-target-${post.id}" value="${post.author}">
                                 <div class="inline-reply-actions">
-                                    <button class="cancel-btn" onclick="toggleInlineReply(${post.id})">إلغاء</button>
-                                    <button onclick="submitInlineReply(${post.id}, '${post.author}')">إرسال الرد</button>
+                                    <button class="cancel-btn" onclick="closeInlineReply(${post.id})">إلغاء</button>
+                                    <button onclick="submitInlineReply(${post.id})">إرسال الرد</button>
                                 </div>
                             </div>
                         </div>
@@ -1059,23 +1078,45 @@
             container.innerHTML = html;
         }
 
-        function toggleInlineReply(postId) {
+        function toggleInlineReply(postId, targetAuthorName) {
             if (!currentUser) {
                 alert("يجب عليك تسجيل الدخول لكي تقوم بالرد!");
                 openAuthModal(false);
                 return;
             }
+
             const box = document.getElementById(`inline-reply-box-${postId}`);
-            box.classList.toggle('active');
+            const input = document.getElementById(`inline-reply-input-${postId}`);
+            const targetInput = document.getElementById(`inline-reply-target-${postId}`);
+
+            targetInput.value = targetAuthorName;
+
+            if (!box.classList.contains('active')) {
+                box.classList.add('active');
+            }
+
+            if (targetAuthorName) {
+                input.placeholder = `الرد على @${targetAuthorName}...`;
+            } else {
+                input.placeholder = "اكتب ردك هنا...";
+            }
+
+            input.focus();
         }
 
-        async function submitInlineReply(postId, authorName) {
+        function closeInlineReply(postId) {
+            const box = document.getElementById(`inline-reply-box-${postId}`);
+            box.classList.remove('active');
+        }
+
+        async function submitInlineReply(postId) {
             if (!currentUser) {
                 alert("يجب عليك تسجيل الدخول للنشر!");
                 return;
             }
 
             const input = document.getElementById(`inline-reply-input-${postId}`);
+            const targetAuthorName = document.getElementById(`inline-reply-target-${postId}`).value;
             const content = input.value.trim();
 
             if (!content) {
@@ -1093,7 +1134,7 @@
                 user_id: currentUser.id,
                 device_id: userDeviceId,
                 reply_to: postId,
-                reply_to_author: authorName,
+                reply_to_author: targetAuthorName,
                 views_data: JSON.stringify(generateViewsSchedule())
             };
 
@@ -1103,6 +1144,7 @@
                 alert("حدث خطأ أثناء إرسال الرد!");
             } else {
                 input.value = '';
+                closeInlineReply(postId);
                 fetchPosts();
             }
         }
